@@ -1,0 +1,37 @@
+# Node.js dependencies
+/node_modules
+node_modules
+
+# Compiled files
+/build
+/dist
+
+# Environment variables
+.env
+
+# Hardhat artifacts
+/artifacts
+artifacts
+
+# Hardhat coverage reports
+/coverage
+
+# Logs
+/logs
+
+# Editor and IDE files
+.vscode
+.idea
+*.iml
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Cache and package manager files
+/.cache
+/yarn-error.log
+
+# My files !
+/readMeRohit
