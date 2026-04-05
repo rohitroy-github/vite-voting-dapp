@@ -1,4 +1,3 @@
-import React from "react";
 import {useState, useEffect} from "react";
 
 import {ethers} from "ethers";
@@ -64,50 +63,54 @@ const Connected = (props) => {
   }, [remainingTime]);
 
   return (
-    <div className="main_container">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ec1ae6] via-[#a036eb] to-[#2642e6] px-8 py-8 text-center text-white md:flex-row md:p-0">
       {/* leftBlock */}
-      <div className="left_block">
-        <div className="welcome_message">
-          <p>Voting Portal</p>
+      <div className="my-4 flex w-full flex-col items-center md:mx-20 md:w-1/2">
+        <div>
+          <p className="m-0 p-0 font-extrabold md:m-[1.2rem]">Voting Portal</p>
         </div>
-        <div className="connected_header">
-          <p>UID (Metamask Address) : {props.account}</p>
+        <div className="w-full text-center">
+          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">UID (Metamask Address) : {props.account}</p>
         </div>
-        <div className="connected_header">
-          <p>Remaining Time : {remainingTime} minutes</p>
+        <div className="w-full text-center">
+          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">Remaining Time : {remainingTime} minutes</p>
         </div>
         {props.showButton ? (
-          <div className="voting_block">
-            <p>
-              You have already casted your vote to : <b>{votedCandidate}</b>
+          <div className="m-[1.2rem] flex w-full flex-col text-center">
+            <p className="m-0 p-0 text-center font-extrabold">
+              You have already casted your vote to : <b className="font-medium">{votedCandidate}</b>
             </p>
           </div>
         ) : (
-          <div className="voting_block">
+          <div className="m-[1.2rem] flex w-full flex-col text-center">
             <input
               type="number"
               placeholder="Entern Candidate Index"
               value={props.number}
               onChange={props.handleNumberChange}
+              className="mb-[5px] box-border rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black"
             ></input>
             <br />
-            <button className="voting_button" onClick={props.voteFunction}>
+            <button
+              className="rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black transition-colors duration-300 hover:bg-gradient-to-br hover:from-[#ec1ae6] hover:via-[#a036eb] hover:to-[#2642e6] hover:text-white"
+              onClick={props.voteFunction}
+            >
               Cast Your Vote
             </button>
           </div>
         )}
 
         {props.showButton ? (
-          <div className="rules_block">
-            <p>
+          <div>
+            <p className="m-[1.2rem] text-center text-[0.7rem]">
               Your vote has been casted successfully based on the above
               mentioned UID. <br />
               The results will be displayed after the contest ends.
             </p>
           </div>
         ) : (
-          <div className="rules_block">
-            <p>
+          <div>
+            <p className="m-[1.2rem] text-center text-[0.7rem]">
               Choose the index number for the respective candidate from the
               mentioned list. <br />
               Once casted, your vote cannot be altered. So please double check
@@ -118,21 +121,21 @@ const Connected = (props) => {
       </div>
 
       {/* rightBlock */}
-      <div className="right_block">
-        <table className="candidate_table">
+      <div className="relative my-4 flex w-full flex-col items-center text-center md:mx-20 md:w-1/2">
+        <table className="w-full">
           <thead>
             <tr>
-              <th className="index">Index</th>
-              <th className="name">Candidates</th>
-              <th>Votes</th>
+              <th className="w-1/3 rounded-[2px] border-2 border-white p-4">Index</th>
+              <th className="w-1/3 rounded-[2px] border-2 border-white p-4">Candidates</th>
+              <th className="w-1/3 rounded-[2px] border-2 border-white p-4">Votes</th>
             </tr>
           </thead>
           <tbody>
             {props.candidates.map((candidate, index) => (
               <tr key={index}>
-                <td className="index">{candidate.index}</td>
-                <td className="index">{candidate.name}</td>
-                <td>{candidate.voteCount}</td>
+                <td className="w-1/3 rounded-[2px] border-2 border-white p-4">{candidate.index}</td>
+                <td className="w-1/3 rounded-[2px] border-2 border-white p-4">{candidate.name}</td>
+                <td className="w-1/3 rounded-[2px] border-2 border-white p-4">{candidate.voteCount}</td>
               </tr>
             ))}
           </tbody>

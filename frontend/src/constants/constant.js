@@ -1,5 +1,5 @@
 // pasteTheContractAddressHereAfterDeployingTheContract
-const contractAddress = "0x5097ace2ac4A9375f0EF380075Fd0A15e5c35118";
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 import ABI_JSON from "../../../backend (solidity-hardhat)/artifacts/contracts/Voting.sol/Voting.json";
 

@@ -6,7 +6,7 @@ async function main() {
   // candidateNames, timeForWhichVotingProcessIsActive(in minutes)
   const contract = await Voting.deploy(
     ["Candidate1", "Candidate2", "Candidate3", "Candidate4", "Candidate5"],
-    120
+    10
   );
 
   console.log("Contract successfully deployed to:", contract.address);

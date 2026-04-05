@@ -1,8 +1,8 @@
 # Voting DApp (EVM-Based)
 
-Voting DApp is a **decentralized voting application** built with **ViteJS** for a secure and transparent voting system.
+Voting DApp is a **decentralized voting application** built with **ViteJS** to provide a secure, transparent, and tamper-resistant voting experience.
 
-Currently, the app operates on **Localhost** and the **Ethereum Sepolia Testnet** using Alchemy.
+The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet** (via Alchemy RPC).
 
 ---
 
@@ -14,19 +14,33 @@ Currently, the app operates on **Localhost** and the **Ethereum Sepolia Testnet*
 
 ---
 
+## Features
+
+- **Wallet-Based Authentication** - Connect with MetaMask to participate in voting.
+- **One Wallet, One Vote** - Each wallet address can cast only one vote.
+- **Live Voting Status** - View whether voting is active or finished.
+- **Real-Time Candidate Table** - See candidate list and vote counts in the UI.
+- **Countdown Visibility** - Track remaining voting time during active sessions.
+- **Transparent Final Results** - Display winner and final vote totals after voting ends.
+- **Multi-Network Ready** - Supports Localhost and Sepolia deployment workflows.
+
+---
+
 ## Tech Stack
 
 ### Frontend:
 
-- **Vite JS** - Fast and modern frontend tooling
+- **Vite JS + React** - Fast and modern frontend development
+- **Tailwind CSS** - Utility-first styling
+- **Ethers.js** - Wallet connection and contract calls from UI
 
 ### Backend:
 
 - **Node.js** - Server-side runtime
 - **Hardhat** - Ethereum development framework
-- **Metamask Wallet** - User authentication and transactions
-- **Ethers.js** - Blockchain interaction library
-- **Alchemy** - Web3 infrastructure provider
+- **Solidity** - Smart contract implementation
+- **Metamask Wallet** - User authentication and transaction signing
+- **Alchemy** - Web3 RPC infrastructure for Sepolia
 
 ---
 
@@ -34,24 +48,32 @@ Currently, the app operates on **Localhost** and the **Ethereum Sepolia Testnet*
 
 ### Backend (Solidity-Hardhat):
 
-1. Navigate to the `backend` folder:
+1. Navigate to the backend folder:
    ```sh
-   cd solidity-hardhat
+   cd "backend (solidity-hardhat)"
    ```
 2. Install dependencies:
    ```sh
    npm install
    ```
-3. Compile and deploy the contract:
+3. Compile contracts:
    ```sh
    npx hardhat compile
+   ```
+4. Deploy contract (choose one):
+   ```sh
+   # Localhost
+   npx hardhat run scripts/deploy.js --network localhost
+
+   # Sepolia
    npx hardhat run scripts/deploy.js --network sepolia
    ```
-4. Copy the **CONTRACT_ADDRESS** from the terminal output and paste it into `frontend/src/constants/constant.js`.
+5. Copy the deployed **CONTRACT_ADDRESS** from terminal output and update:
+   - `frontend/src/constants/constant.js`
 
 ### Frontend:
 
-1. Navigate to the `frontend` folder:
+1. Navigate to the frontend folder:
    ```sh
    cd frontend
    ```
@@ -63,11 +85,14 @@ Currently, the app operates on **Localhost** and the **Ethereum Sepolia Testnet*
    ```sh
    npm run dev
    ```
+4. Open the local URL shown in terminal (usually `http://localhost:5173`) and connect MetaMask.
 
 ---
 
 ## Project Status & Contributions
 
-The project is complete but undergoing continuous improvements. Suggestions for enhancements are welcome!
+The project is functionally complete and actively being improved.
+
+Suggestions, issue reports, and pull requests are always welcome.
 
 If you like the project, leave a ⭐! 😊
