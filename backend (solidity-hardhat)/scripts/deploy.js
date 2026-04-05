@@ -3,9 +3,10 @@ const {ethers} = require("hardhat");
 async function main() {
   const Voting = await ethers.getContractFactory("Voting");
 
-  // candidateNames, timeForWhichVotingProcessIsActive(in minutes)
+  // candidateNames, setupWindowMinutes, durationInMinutes
   const contract = await Voting.deploy(
     ["Candidate1", "Candidate2", "Candidate3", "Candidate4", "Candidate5"],
+    5,
     10
   );
 

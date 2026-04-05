@@ -51,7 +51,7 @@ export function useVoting() {
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
-    const candidatesList = await contractInstance.getAllVotesOfCandiates();
+    const candidatesList = await contractInstance.getAllVotesOfCandidates();
     const formattedCandidates = candidatesList.map((candidate, index) => ({
       index,
       name: candidate.name,

@@ -8,35 +8,36 @@ contract Voting {
     }
 
     Candidate[] public candidates;
-    address owner;
+    address public owner;
     mapping(address => bool) public voters;
     mapping(address => uint256) public voterToCandidate;
 
     uint256 public votingStart;
     uint256 public votingEnd;
 
-    constructor(string[] memory _candidateNames, uint256 _durationInMinutes) {
+    constructor(string[] memory _candidateNames, uint256 _setupWindowMinutes, uint256 _durationInMinutes) {
         for (uint256 i = 0; i < _candidateNames.length; i++) {
             candidates.push(
                 Candidate({name: _candidateNames[i], voteCount: 0})
             );
         }
         owner = msg.sender;
-        votingStart = block.timestamp;
-        votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
+        votingStart = block.timestamp + (_setupWindowMinutes * 1 minutes);
+        votingEnd = votingStart + (_durationInMinutes * 1 minutes);
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Only the owner can perform this action.");
         _;
     }
 
     function addCandidate(string memory _name) public onlyOwner {
+        require(block.timestamp < votingStart, "Cannot add candidates after voting has started.");
         candidates.push(Candidate({name: _name, voteCount: 0}));
     }
 
     function vote(uint256 _candidateIndex) public {
-        // checkIfVoterHasAlreadyVoted?
+        require(getVotingStatus(), "Voting is not currently active.");
         require(!voters[msg.sender], "You have already voted.");
         require(
             _candidateIndex < candidates.length,
@@ -49,7 +50,7 @@ contract Voting {
     }
 
     // function : getVotesStatusForAllListedCandidates
-    function getAllVotesOfCandiates() public view returns (Candidate[] memory) {
+    function getAllVotesOfCandidates() public view returns (Candidate[] memory) {
         return candidates;
     }
 
