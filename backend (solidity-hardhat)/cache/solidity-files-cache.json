@@ -1,10 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\rohit.f.roy\\OneDrive - Accenture\\Desktop\\[dev]\\github-pulls\\vite-voting-dapp\\backend (solidity-hardhat)\\contracts\\Voting.sol": {
-      "lastModificationDate": 1775367882531,
-      "contentHash": "5685d5431ffe9233e791a943278a9eb3",
-      "sourceName": "contracts/Voting.sol",
+    "C:\\Users\\rohit.f.roy\\OneDrive - Accenture\\Desktop\\[dev]\\github-pulls\\vite-voting-dapp\\backend (solidity-hardhat)\\contracts\\VotingContract.sol": {
+      "lastModificationDate": 1775368923523,
+      "contentHash": "c871227a0c06ecde450f43714e205410",
+      "sourceName": "contracts/VotingContract.sol",
       "solcConfig": {
         "version": "0.8.0",
         "settings": {
@@ -33,7 +33,7 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Voting"
+        "VotingContract"
       ]
     }
   }

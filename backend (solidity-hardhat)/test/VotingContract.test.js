@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Voting Contract", function () {
-  let Voting, voting, owner, addr1, addr2, addr3;
+  let VotingContract, voting, owner, addr1, addr2, addr3;
 
   const candidateNames = ["Alice", "Bob", "Charlie"];
   const duration = 10; // minutes
@@ -10,8 +10,8 @@ describe("Voting Contract", function () {
   beforeEach(async () => {
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
-    Voting = await ethers.getContractFactory("Voting");
-    voting = await Voting.deploy(candidateNames, 0, duration);
+    VotingContract = await ethers.getContractFactory("VotingContract");
+    voting = await VotingContract.deploy(candidateNames, 0, duration);
     await voting.deployed();
   });
 
@@ -25,26 +25,26 @@ describe("Voting Contract", function () {
     });
 
     it("Should fail when deployed with no candidates", async () => {
-      await expect(Voting.deploy([], 0, duration)).to.be.revertedWith(
+      await expect(VotingContract.deploy([], 0, duration)).to.be.revertedWith(
         "At least one candidate required"
       );
     });
 
     it("Should fail when deployed with zero duration", async () => {
-      await expect(Voting.deploy(candidateNames, 0, 0)).to.be.revertedWith(
+      await expect(VotingContract.deploy(candidateNames, 0, 0)).to.be.revertedWith(
         "Duration must be greater than 0"
       );
     });
 
     it("Should fail when any candidate name is empty", async () => {
-      await expect(Voting.deploy(["Alice", ""], 0, duration)).to.be.revertedWith(
+      await expect(VotingContract.deploy(["Alice", ""], 0, duration)).to.be.revertedWith(
         "Empty candidate name"
       );
     });
 
     it("Should fail when deployed with duplicate candidate names", async () => {
       await expect(
-        Voting.deploy(["Alice", "Bob", "Alice"], 0, duration)
+        VotingContract.deploy(["Alice", "Bob", "Alice"], 0, duration)
       ).to.be.revertedWith("Duplicate candidate");
     });
 
@@ -66,7 +66,7 @@ describe("Voting Contract", function () {
   describe("Candidate Management", function () {
     it("Owner can add candidate BEFORE voting starts", async () => {
       // Deploy a fresh instance with a 10-minute setup window before voting starts
-      const freshVoting = await Voting.deploy(candidateNames, 10, duration);
+      const freshVoting = await VotingContract.deploy(candidateNames, 10, duration);
       await freshVoting.deployed();
 
       await expect(freshVoting.addCandidate("David"))
@@ -78,7 +78,7 @@ describe("Voting Contract", function () {
     });
 
     it("Should fail if candidate name is empty", async () => {
-      const freshVoting = await Voting.deploy(candidateNames, 10, duration);
+      const freshVoting = await VotingContract.deploy(candidateNames, 10, duration);
       await freshVoting.deployed();
 
       await expect(freshVoting.addCandidate("")).to.be.revertedWith(
@@ -87,7 +87,7 @@ describe("Voting Contract", function () {
     });
 
     it("Should fail if candidate already exists", async () => {
-      const freshVoting = await Voting.deploy(candidateNames, 10, duration);
+      const freshVoting = await VotingContract.deploy(candidateNames, 10, duration);
       await freshVoting.deployed();
 
       await expect(freshVoting.addCandidate("Alice")).to.be.revertedWith(
