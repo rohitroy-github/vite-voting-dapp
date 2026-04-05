@@ -1,6 +1,6 @@
-# Voting DApp (EVM-Based)
+# Decntrocast (EVM Based)
 
-Voting DApp is a **decentralized voting application** built with **ViteJS** to provide a secure, transparent, and tamper-resistant voting experience.
+**Decntrocast** is a **decentralized voting application** built with **ViteJS** to provide a secure, transparent, and tamper-resistant voting experience.
 
 The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet** (via Alchemy RPC).
 
