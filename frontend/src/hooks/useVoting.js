@@ -52,7 +52,23 @@ export function useVoting() {
       signer,
     );
 
-    const tx = await contractInstance.vote(number);
+    // Resolve input: accept either a numeric index or a candidate name
+    const trimmed = number.trim();
+    let candidateIndex;
+    if (/^\d+$/.test(trimmed)) {
+      candidateIndex = parseInt(trimmed, 10);
+    } else {
+      const match = candidates.find(
+        (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+      );
+      if (!match) {
+        console.error(`No candidate found with name "${trimmed}"`);
+        return;
+      }
+      candidateIndex = match.index;
+    }
+
+    const tx = await contractInstance.vote(candidateIndex);
     await tx.wait();
 
     // Voted event listener handles the refresh;

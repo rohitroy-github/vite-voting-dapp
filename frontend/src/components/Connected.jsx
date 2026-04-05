@@ -19,30 +19,55 @@ const Connected = (props) => {
       signer
     );
 
-    const votedCandidateName = await contractInstance.voterVotedFor(
-      await signer.getAddress()
-    );
+    const voterAddress = await signer.getAddress();
+    const hasVoted = await contractInstance.voters(voterAddress);
 
+    if (!hasVoted) {
+      setVotedCandidate("");
+      return;
+    }
+
+    const votedCandidateName = await contractInstance.voterVotedFor(voterAddress);
     setVotedCandidate(votedCandidateName);
   }
 
   // Function to fetch the remaining time
   async function getRemainingTime() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(
-      contractAddress,
-      contractABI,
-      signer
-    );
-    const time = await contractInstance.getRemainingTime();
-    // conversionToSeconds
-    const timeInSeconds = time.toNumber();
-    // conversionToMinutes
-    const timeInMinutes = Math.floor(timeInSeconds / 60);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contractInstance = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
 
-    setRemainingTime(timeInMinutes);
+      const [startTs, endTs, latestBlock] = await Promise.all([
+        contractInstance.votingStart(),
+        contractInstance.votingEnd(),
+        provider.getBlock("latest"),
+      ]);
+
+      const nowTs = latestBlock.timestamp;
+      const votingStartTs = startTs.toNumber();
+      const votingEndTs = endTs.toNumber();
+
+      if (nowTs < votingStartTs) {
+        setRemainingTime("Not started");
+        return;
+      }
+
+      if (nowTs >= votingEndTs) {
+        setRemainingTime(0);
+        return;
+      }
+
+      const timeInMinutes = Math.ceil((votingEndTs - nowTs) / 60);
+      setRemainingTime(timeInMinutes);
+    } catch (err) {
+      console.error("Error fetching remaining time:", err);
+    }
   }
 
   useEffect(() => {
@@ -54,16 +79,15 @@ const Connected = (props) => {
   useEffect(() => {
     getRemainingTime();
 
-    // Update the remaining time every second
     const timer = setInterval(() => {
       getRemainingTime();
-    }, 1000);
+    }, 30000); // Update every 30 seconds
 
     // Clear the interval when the component is unmounted
     return () => {
       clearInterval(timer);
     };
-  }, [remainingTime]);
+  }, []);
 
   return (
     <div className="flex w-full flex-col items-center justify-center py-8 text-center text-white md:flex-row md:items-start">
@@ -76,7 +100,7 @@ const Connected = (props) => {
           <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">Voter's UID: {shortenAddress(props.account)}</p>
         </div>
         <div className="w-full text-center">
-          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">Remaining Time : {remainingTime} minutes</p>
+          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">Poll ends in: {remainingTime} {typeof remainingTime === "number" ? "minutes" : ""}</p>
         </div>
         {props.showButton ? (
           <div className="m-[1.2rem] flex w-full flex-col text-center">
@@ -87,18 +111,17 @@ const Connected = (props) => {
         ) : (
           <div className="m-[1.2rem] flex w-full flex-col text-center">
             <input
-              type="number"
-              placeholder="Entern Candidate Index"
+              type="text"
+              placeholder="Enter candidate name or index"
               value={props.number}
               onChange={props.handleNumberChange}
-              className="mb-[5px] box-border rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black"
-            ></input>
-            <br />
+              className="box-border w-full rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black"
+            />
             <button
-              className="rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black transition-colors duration-300 hover:bg-gradient-to-br hover:from-[#ec1ae6] hover:via-[#a036eb] hover:to-[#2642e6] hover:text-white"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black transition-all duration-300 hover:bg-transparent hover:text-white hover:backdrop-blur-sm"
               onClick={props.voteFunction}
             >
-              Cast Your Vote
+              Seal your vote with MetaMask
             </button>
           </div>
         )}
