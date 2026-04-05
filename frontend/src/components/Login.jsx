@@ -2,7 +2,7 @@ import { CiWallet } from "react-icons/ci";
 
 const Login = (props) => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ec1ae6] via-[#a036eb] to-[#2642e6] px-8 text-center text-white">
+    <div className="flex w-full flex-col items-center justify-center py-8 text-center text-white">
       <div className="text-center">
         <h1 className="m-0 text-[2.2rem] font-extrabold tracking-[0.02em] md:text-5xl">Decentrocast</h1>
         <p className="mb-0 mt-[0.4rem] text-base font-medium md:text-[1.2rem]">A decentralized voting application powered by blockchain.</p>

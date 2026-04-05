@@ -18,10 +18,27 @@ export function useVoting() {
       window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
 
+    // Subscribe to the Voted event so any vote — from any user —
+    // immediately refreshes the candidate counts and voting status
+    const eventProvider = new ethers.providers.Web3Provider(window.ethereum);
+    const contractInstance = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      eventProvider,
+    );
+    contractInstance.on("Voted", (voter, candidateIndex) => {
+      getCandidates();
+      getCurrentStatus();
+    });
+
     return () => {
       if (window.ethereum) {
-        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+        window.ethereum.removeListener(
+          "accountsChanged",
+          handleAccountsChanged,
+        );
       }
+      contractInstance.removeAllListeners("Voted");
     };
   }, []);
 
@@ -29,11 +46,17 @@ export function useVoting() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+    const contractInstance = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      signer,
+    );
 
     const tx = await contractInstance.vote(number);
     await tx.wait();
 
+    // Voted event listener handles the refresh;
+    // only canVote() is needed here (user-specific state)
     canVote();
   }
 
@@ -41,7 +64,11 @@ export function useVoting() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+    const contractInstance = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      signer,
+    );
     const voteStatus = await contractInstance.voters(await signer.getAddress());
     setCanVote(voteStatus);
   }
@@ -50,7 +77,11 @@ export function useVoting() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+    const contractInstance = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      signer,
+    );
     const candidatesList = await contractInstance.getAllVotesOfCandidates();
     const formattedCandidates = candidatesList.map((candidate, index) => ({
       index,
@@ -64,7 +95,11 @@ export function useVoting() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+    const contractInstance = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      signer,
+    );
     const status = await contractInstance.getVotingStatus();
     setVotingStatus(status);
   }
@@ -88,7 +123,7 @@ export function useVoting() {
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
-        console.log("Metamask Connected : " + address);
+        // console.log("Metamask Connected : " + address); // Debug log to confirm connection
         setIsConnected(true);
         canVote();
       } catch (err) {

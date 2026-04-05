@@ -2,6 +2,7 @@ import {useState, useEffect} from "react";
 
 import {ethers} from "ethers";
 import {contractABI, contractAddress} from "../constants/constant.js";
+import {shortenAddress} from "../utils/utils.js";
 
 const Connected = (props) => {
   const [votedCandidate, setVotedCandidate] = useState("");
@@ -45,8 +46,10 @@ const Connected = (props) => {
   }
 
   useEffect(() => {
-    getVotedCandidate();
-  }, []);
+    if (props.showButton) {
+      getVotedCandidate();
+    }
+  }, [props.showButton]);
 
   useEffect(() => {
     getRemainingTime();
@@ -63,14 +66,14 @@ const Connected = (props) => {
   }, [remainingTime]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ec1ae6] via-[#a036eb] to-[#2642e6] px-8 py-8 text-center text-white md:flex-row md:p-0">
+    <div className="flex w-full flex-col items-center justify-center py-8 text-center text-white md:flex-row md:items-start">
       {/* leftBlock */}
-      <div className="my-4 flex w-full flex-col items-center md:mx-20 md:w-1/2">
+      <div className="my-4 flex w-full flex-col items-center justify-center md:w-1/2 md:self-stretch md:pr-8">
         <div>
           <p className="m-0 p-0 font-extrabold md:m-[1.2rem]">Voting Portal</p>
         </div>
         <div className="w-full text-center">
-          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">UID (Metamask Address) : {props.account}</p>
+          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">Voter's UID: {shortenAddress(props.account)}</p>
         </div>
         <div className="w-full text-center">
           <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">Remaining Time : {remainingTime} minutes</p>
@@ -105,7 +108,7 @@ const Connected = (props) => {
             <p className="m-[1.2rem] text-center text-[0.7rem]">
               Your vote has been casted successfully based on the above
               mentioned UID. <br />
-              The results will be displayed after the contest ends.
+              The results will be displayed after the poll ends.
             </p>
           </div>
         ) : (
@@ -121,7 +124,8 @@ const Connected = (props) => {
       </div>
 
       {/* rightBlock */}
-      <div className="relative my-4 flex w-full flex-col items-center text-center md:mx-20 md:w-1/2">
+      <div className="relative my-4 flex w-full flex-col items-center justify-center text-center md:w-1/2 md:self-stretch md:pl-8">
+        <p className="mb-3 text-lg font-extrabold md:text-xl">Live Vote Counts</p>
         <table className="w-full">
           <thead>
             <tr>

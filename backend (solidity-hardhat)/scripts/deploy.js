@@ -5,14 +5,13 @@ async function main() {
   const [deployer] = await ethers.getSigners();
 
   const candidateNames = [
-    "Candidate1",
-    "Candidate2",
-    "Candidate3",
-    "Candidate4",
-    "Candidate5",
+    "Rohit",
+    "Rishav",
+    "Arshiya",
+    "Era",
   ];
-  const setupWindowMinutes = 5;
-  const votingDurationMinutes = 10;
+  const setupWindowMinutes = 0;
+  const votingDurationMinutes = 2;
 
   const VotingContract = await ethers.getContractFactory("VotingContract");
 

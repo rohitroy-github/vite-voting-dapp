@@ -29,6 +29,9 @@ module.exports = {
     // In-memory network spun up for each test run — no persistence
     hardhat: {
       allowUnlimitedContractSize: true,
+      mining: {
+        interval: 5000, // Simulate a new block creation every 5 seconds to mimic real network conditions and allow time-based functions to work properly during testing
+      },
     },
 
     // Public Ethereum testnet — requires SEPOLIA_ALCHEMY_RPC_URL and METAMASK_PRIVATE_KEY in .env

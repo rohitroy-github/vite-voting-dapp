@@ -1,12 +1,18 @@
 const Finished = (props) => {
   function findWinningCandidate() {
+    if (!props.candidates || props.candidates.length === 0) {
+      return null;
+    }
+
     const maxVoteCount = Math.max(
       ...props.candidates.map((candidate) => candidate.voteCount)
     );
     const winningCandidates = props.candidates.filter(
       (candidate) => candidate.voteCount === maxVoteCount
     );
-    if (winningCandidates.length > 0) {
+
+    // A winner exists only when exactly one candidate has the highest votes.
+    if (winningCandidates.length === 1) {
       const winningCandidate = winningCandidates[0];
       return {
         name: winningCandidate.name,
@@ -17,24 +23,39 @@ const Finished = (props) => {
     }
   }
 
+  const winningCandidate = findWinningCandidate();
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ec1ae6] via-[#a036eb] to-[#2642e6] px-8 py-8 text-center text-white md:flex-row md:p-0">
-      <div className="my-4 flex w-full flex-col items-center md:mx-20 md:w-1/2">
+    <div className="flex w-full flex-col items-center justify-center py-8 text-center text-white md:flex-row md:items-start">
+      <div className="my-4 flex w-full flex-col items-center justify-center md:w-1/2 md:self-stretch md:pr-8">
         <div>
-          <p className="m-0 p-0 font-extrabold md:m-[1.2rem]">Results Portal</p>
+          <p className="m-0 p-0 text-lg font-extrabold md:m-[1.2rem] md:text-xl">Results Portal</p>
+          <p className="m-0 mt-1 p-0 text-xs font-medium md:text-sm">
+            Polls have ended, results are out.
+          </p>
         </div>
         <div className="w-full text-center">
-          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">The winning candidate : {findWinningCandidate().name}</p>
-          <p className="m-0 p-0 text-base font-extrabold md:m-[1.2rem]">
-            Votes secured by the winning candidate :{" "}
-            {findWinningCandidate().voteCount}
-          </p>
+          {winningCandidate ? (
+            <>
+              <p className="m-0 p-0 text-sm font-bold md:m-[1.2rem] md:text-base">
+                The winning candidate : {winningCandidate.name}
+              </p>
+              <p className="m-0 p-0 text-sm font-bold md:m-[1.2rem] md:text-base">
+                Votes secured by the winning candidate : {" "}
+                {winningCandidate.voteCount}
+              </p>
+            </>
+          ) : (
+            <p className="m-0 p-0 text-sm font-bold md:m-[1.2rem] md:text-base">
+              There is no clear majority in this poll.
+            </p>
+          )}
         </div>
       </div>
 
       {/* rightBlock */}
-      <div className="relative my-4 flex w-full flex-col items-center text-center md:mx-20 md:w-1/2">
-        <table className="w-full">
+      <div className="relative my-4 flex w-full flex-col items-center justify-center text-center md:w-1/2 md:self-stretch">
+        <table className="w-full max-w-[560px]">
           <thead>
             <tr>
               <th className="w-1/3 rounded-[2px] border-2 border-white p-4">Index</th>
