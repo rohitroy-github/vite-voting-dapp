@@ -24,6 +24,30 @@ describe("Voting Contract", function () {
       expect(candidates).to.deep.equal(candidateNames);
     });
 
+    it("Should fail when deployed with no candidates", async () => {
+      await expect(Voting.deploy([], 0, duration)).to.be.revertedWith(
+        "At least one candidate required"
+      );
+    });
+
+    it("Should fail when deployed with zero duration", async () => {
+      await expect(Voting.deploy(candidateNames, 0, 0)).to.be.revertedWith(
+        "Duration must be greater than 0"
+      );
+    });
+
+    it("Should fail when any candidate name is empty", async () => {
+      await expect(Voting.deploy(["Alice", ""], 0, duration)).to.be.revertedWith(
+        "Empty candidate name"
+      );
+    });
+
+    it("Should fail when deployed with duplicate candidate names", async () => {
+      await expect(
+        Voting.deploy(["Alice", "Bob", "Alice"], 0, duration)
+      ).to.be.revertedWith("Duplicate candidate");
+    });
+
     it("Should set the correct owner", async () => {
       expect(await voting.owner()).to.equal(owner.address);
     });
@@ -45,10 +69,30 @@ describe("Voting Contract", function () {
       const freshVoting = await Voting.deploy(candidateNames, 10, duration);
       await freshVoting.deployed();
 
-      await freshVoting.addCandidate("David");
+      await expect(freshVoting.addCandidate("David"))
+        .to.emit(freshVoting, "CandidateAdded")
+        .withArgs("David");
 
       const candidates = await freshVoting.getAllCandidates();
       expect(candidates).to.include("David");
+    });
+
+    it("Should fail if candidate name is empty", async () => {
+      const freshVoting = await Voting.deploy(candidateNames, 10, duration);
+      await freshVoting.deployed();
+
+      await expect(freshVoting.addCandidate("")).to.be.revertedWith(
+        "Candidate name cannot be empty"
+      );
+    });
+
+    it("Should fail if candidate already exists", async () => {
+      const freshVoting = await Voting.deploy(candidateNames, 10, duration);
+      await freshVoting.deployed();
+
+      await expect(freshVoting.addCandidate("Alice")).to.be.revertedWith(
+        "Candidate already exists"
+      );
     });
 
     it("Should fail if non-owner tries to add candidate", async () => {
@@ -71,7 +115,9 @@ describe("Voting Contract", function () {
   // =============================
   describe("Voting", function () {
     it("Should allow a user to vote", async () => {
-      await voting.connect(addr1).vote(0);
+      await expect(voting.connect(addr1).vote(0))
+        .to.emit(voting, "Voted")
+        .withArgs(addr1.address, 0);
 
       const allVotes = await voting.getAllVotesOfCandidates();
       expect(allVotes[0].voteCount).to.equal(1);
@@ -88,7 +134,7 @@ describe("Voting Contract", function () {
     it("Should reject invalid candidate index", async () => {
       await expect(
         voting.connect(addr1).vote(999)
-      ).to.be.revertedWith("Invalid candidate index.");
+      ).to.be.revertedWith("Invalid candidate index");
     });
 
     it("Should record which candidate a voter voted for", async () => {
@@ -102,7 +148,7 @@ describe("Voting Contract", function () {
       await expect(
         voting.voterVotedFor(addr1.address)
       ).to.be.revertedWith(
-        "This address has not casted a vote yet."
+        "This address has not casted a vote yet"
       );
     });
   });
