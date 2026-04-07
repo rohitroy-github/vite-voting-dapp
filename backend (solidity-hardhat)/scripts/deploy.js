@@ -11,7 +11,7 @@ async function main() {
     "Era",
   ];
   const setupWindowMinutes = 0;
-  const votingDurationMinutes = 10;
+  const votingDurationMinutes = 5;
 
   const VotingContract = await ethers.getContractFactory("VotingContract");
 
