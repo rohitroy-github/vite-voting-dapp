@@ -105,7 +105,7 @@ const Connected = (props) => {
         {props.showButton ? (
           <div className="m-[1.2rem] flex w-full flex-col text-center">
             <p className="m-0 p-0 text-center font-extrabold">
-              You have already casted your vote to : <b className="font-medium">{votedCandidate}</b>
+              You voted for : <b className="font-medium">{votedCandidate}</b>
             </p>
           </div>
         ) : (
@@ -120,8 +120,16 @@ const Connected = (props) => {
             <button
               className="mt-2 flex w-full items-center justify-center gap-2 rounded-[5px] border-2 border-white bg-white p-4 text-center font-['Montserrat',sans-serif] text-base font-extrabold text-black transition-all duration-300 hover:bg-transparent hover:text-white hover:backdrop-blur-sm"
               onClick={props.voteFunction}
+              disabled={props.isVoting}
             >
-              Seal your vote with MetaMask
+              {props.isVoting ? (
+                <span
+                  className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent"
+                  aria-label="Submitting vote"
+                />
+              ) : (
+                "Seal your vote with MetaMask"
+              )}
             </button>
           </div>
         )}

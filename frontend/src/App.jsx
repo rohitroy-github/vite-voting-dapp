@@ -8,6 +8,7 @@ function App() {
   const {
     account,
     isConnected,
+    isVoting,
     votingStatus,
     candidates,
     number,
@@ -33,6 +34,7 @@ function App() {
             number={number}
             handleNumberChange={handleNumberChange}
             voteFunction={vote}
+            isVoting={isVoting}
             showButton={CanVote}
           />
         ) : (

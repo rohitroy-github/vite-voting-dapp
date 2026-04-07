@@ -6,6 +6,7 @@ export function useVoting() {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isVoting, setIsVoting] = useState(false);
   const [votingStatus, setVotingStatus] = useState(true);
   const [candidates, setCandidates] = useState([]);
   const [number, setNumber] = useState("");
@@ -26,9 +27,9 @@ export function useVoting() {
       contractABI,
       eventProvider,
     );
-    contractInstance.on("Voted", (voter, candidateIndex) => {
-      getCandidates();
-      getCurrentStatus();
+    contractInstance.on("Voted", async () => {
+      await Promise.all([getCandidates(), getCurrentStatus()]);
+      setIsVoting(false);
     });
 
     return () => {
@@ -43,37 +44,42 @@ export function useVoting() {
   }, []);
 
   async function vote() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(
-      contractAddress,
-      contractABI,
-      signer,
-    );
-
-    // Resolve input: accept either a numeric index or a candidate name
-    const trimmed = number.trim();
-    let candidateIndex;
-    if (/^\d+$/.test(trimmed)) {
-      candidateIndex = parseInt(trimmed, 10);
-    } else {
-      const match = candidates.find(
-        (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contractInstance = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer,
       );
-      if (!match) {
-        console.error(`No candidate found with name "${trimmed}"`);
-        return;
+
+      // Resolve input: accept either a numeric index or a candidate name
+      const trimmed = number.trim();
+      let candidateIndex;
+      if (/^\d+$/.test(trimmed)) {
+        candidateIndex = parseInt(trimmed, 10);
+      } else {
+        const match = candidates.find(
+          (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+        );
+        if (!match) {
+          console.error(`No candidate found with name "${trimmed}"`);
+          return;
+        }
+        candidateIndex = match.index;
       }
-      candidateIndex = match.index;
+
+      setIsVoting(true);
+      const tx = await contractInstance.vote(candidateIndex);
+      await tx.wait();
+
+      // Keep loader visible until this user's state is synced as well.
+      await canVote();
+    } catch (err) {
+      console.error("Vote failed:", err);
+      setIsVoting(false);
     }
-
-    const tx = await contractInstance.vote(candidateIndex);
-    await tx.wait();
-
-    // Voted event listener handles the refresh;
-    // only canVote() is needed here (user-specific state)
-    canVote();
   }
 
   async function canVote() {
@@ -163,6 +169,7 @@ export function useVoting() {
   return {
     account,
     isConnected,
+    isVoting,
     votingStatus,
     candidates,
     number,

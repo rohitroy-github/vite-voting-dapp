@@ -7,12 +7,18 @@ contract VotingContract {
         uint256 voteCount;
     }
 
+    // Ordered list of all candidates in the election.
     Candidate[] public candidates;
+    // Contract deployer who controls pre-voting admin actions.
     address public owner;
+    // Tracks whether an address has already voted.
     mapping(address => bool) public voters;
+    // Stores the selected candidate index for each voter address.
     mapping(address => uint256) public voterToCandidate;
+    // Internal helper to prevent duplicate candidate names.
     mapping(string => bool) private candidateExists;
 
+    // Voting window timestamps (unix seconds).
     uint256 public votingStart;
     uint256 public votingEnd;
 
@@ -24,9 +30,11 @@ contract VotingContract {
         uint256 _setupWindowMinutes,
         uint256 _durationInMinutes
     ) {
+        // Require at least one candidate and a valid voting duration.
         require(_candidateNames.length > 0, "At least one candidate required");
         require(_durationInMinutes > 0, "Duration must be greater than 0");
 
+        // Seed the initial candidate list while enforcing non-empty unique names.
         for (uint256 i = 0; i < _candidateNames.length; i++) {
             string memory name = _candidateNames[i];
 
@@ -40,15 +48,18 @@ contract VotingContract {
 
         owner = msg.sender;
 
+        // Voting can start after an optional setup window.
         votingStart = block.timestamp + (_setupWindowMinutes * 1 minutes);
         votingEnd = votingStart + (_durationInMinutes * 1 minutes);
     }
 
+    // Restricts access to owner-only administrative actions.
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can perform this action.");
         _;
     }
 
+    // Adds a new candidate before voting begins.
     function addCandidate(string memory _name) public onlyOwner {
         require(
             block.timestamp < votingStart,
@@ -65,11 +76,13 @@ contract VotingContract {
         emit CandidateAdded(_name);
     }
 
+    // Casts one vote for a candidate by index.
     function vote(uint256 _candidateIndex) public {
         require(getVotingStatus(), "Voting is not currently active.");
         require(!voters[msg.sender], "You have already voted.");
         require(_candidateIndex < candidates.length, "Invalid candidate index");
 
+        // Overflow is unrealistic here (uint256), so unchecked saves gas.
         unchecked {
             candidates[_candidateIndex].voteCount++;
         }
@@ -84,9 +97,11 @@ contract VotingContract {
         view
         returns (Candidate[] memory)
     {
+        // Returns names and vote counts for each candidate.
         return candidates;
     }
 
+    // Returns only candidate names, useful for lightweight UI population.
     function getAllCandidates() public view returns (string[] memory) {
         string[] memory candidateNames = new string[](candidates.length);
         for (uint256 i = 0; i < candidates.length; i++) {
@@ -95,10 +110,12 @@ contract VotingContract {
         return candidateNames;
     }
 
+    // True only while current time is inside the voting window.
     function getVotingStatus() public view returns (bool) {
         return (block.timestamp >= votingStart && block.timestamp < votingEnd);
     }
 
+    // Remaining voting time in seconds; returns 0 after end.
     function getRemainingTime() public view returns (uint256) {
         require(block.timestamp >= votingStart, "Voting has not started yet");
 
@@ -109,6 +126,7 @@ contract VotingContract {
         return votingEnd - block.timestamp;
     }
 
+    // Returns the candidate name chosen by a specific voter address.
     function voterVotedFor(address _voter) public view returns (string memory) {
         require(voters[_voter], "This address has not casted a vote yet");
 
