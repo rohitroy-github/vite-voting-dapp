@@ -1,0 +1,38 @@
+Run Timestamp: 2026-04-05T06:08:44.684Z
+Command: npx hardhat test
+Exit Code: 0
+
+
+  Voting Contract
+    Deployment
+      ✔ Should initialize candidates correctly
+      ✔ Should fail when deployed with no candidates (47ms)
+      ✔ Should fail when deployed with zero duration
+      ✔ Should fail when any candidate name is empty (59ms)
+      ✔ Should fail when deployed with duplicate candidate names
+      ✔ Should set the correct owner
+      ✔ Should set correct voting time
+    Candidate Management
+      ✔ Owner can add candidate BEFORE voting starts (89ms)
+      ✔ Should fail if candidate name is empty (51ms)
+      ✔ Should fail if candidate already exists (51ms)
+      ✔ Should fail if non-owner tries to add candidate
+      ✔ Should fail if adding candidate AFTER voting starts
+    Voting
+      ✔ Should allow a user to vote (65ms)
+      ✔ Should prevent double voting (50ms)
+      ✔ Should reject invalid candidate index
+      ✔ Should record which candidate a voter voted for (48ms)
+      ✔ Should fail if user hasn't voted and calls voterVotedFor
+    Voting Time Logic
+      ✔ Should return true when voting is active
+      ✔ Should prevent voting AFTER voting ends
+      ✔ Should return 0 remaining time after voting ends
+      ✔ Should return correct remaining time during voting
+    View Functions
+      ✔ Should return all candidates
+      ✔ Should return vote counts correctly (54ms)
+
+
+  23 passing (4s)
+

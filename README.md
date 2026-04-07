@@ -8,9 +8,9 @@ The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet
 
 ## Snapshots
 
-| ![image](https://github.com/rohitroy-github/vite-voting-dapp/assets/68563695/797ef5ad-8df6-484b-8a75-ceff84e576fd) | ![image](https://github.com/rohitroy-github/vite-voting-dapp/assets/68563695/d50d4440-79d4-485f-932a-b320358ae7c1) |
-| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| ![image](https://github.com/rohitroy-github/vite-voting-dapp/assets/68563695/8063f77f-676e-4b13-b179-992fc9e62530) |                                                                                                                    |
+| ![image](https://github.com/user-attachments/assets/d69f3f21-79c6-4d8a-96e0-40de3fe39da4) | ![image](https://github.com/user-attachments/assets/30bcd94e-38e4-4ad7-8f13-ebed0c1d767c) |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |    
+| ![image](https://github.com/user-attachments/assets/ea5b6d28-38fe-4832-a8b4-7252f2c3350b) | ![image](https://github.com/user-attachments/assets/fd389ae1-9463-481f-82b5-76df949bf962)                                                   |
 
 ---
 
