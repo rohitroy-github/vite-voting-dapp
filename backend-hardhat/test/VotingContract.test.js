@@ -1,5 +1,5 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const {expect} = require("chai");
+const {ethers, network} = require("hardhat");
 
 describe("Voting Contract", function () {
   let VotingContract, voting, owner, addr1, addr2, addr3;
@@ -8,6 +8,10 @@ describe("Voting Contract", function () {
   const duration = 10; // minutes
 
   beforeEach(async () => {
+    // Force deterministic per-transaction mining for this test suite.
+    await network.provider.send("evm_setAutomine", [true]);
+    await network.provider.send("evm_setIntervalMining", [0]);
+
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
     VotingContract = await ethers.getContractFactory("VotingContract");
@@ -26,25 +30,25 @@ describe("Voting Contract", function () {
 
     it("Should fail when deployed with no candidates", async () => {
       await expect(VotingContract.deploy([], 0, duration)).to.be.revertedWith(
-        "At least one candidate required"
+        "At least one candidate required",
       );
     });
 
     it("Should fail when deployed with zero duration", async () => {
-      await expect(VotingContract.deploy(candidateNames, 0, 0)).to.be.revertedWith(
-        "Duration must be greater than 0"
-      );
+      await expect(
+        VotingContract.deploy(candidateNames, 0, 0),
+      ).to.be.revertedWith("Duration must be greater than 0");
     });
 
     it("Should fail when any candidate name is empty", async () => {
-      await expect(VotingContract.deploy(["Alice", ""], 0, duration)).to.be.revertedWith(
-        "Empty candidate name"
-      );
+      await expect(
+        VotingContract.deploy(["Alice", ""], 0, duration),
+      ).to.be.revertedWith("Empty candidate name");
     });
 
     it("Should fail when deployed with duplicate candidate names", async () => {
       await expect(
-        VotingContract.deploy(["Alice", "Bob", "Alice"], 0, duration)
+        VotingContract.deploy(["Alice", "Bob", "Alice"], 0, duration),
       ).to.be.revertedWith("Duplicate candidate");
     });
 
@@ -66,7 +70,11 @@ describe("Voting Contract", function () {
   describe("Candidate Management", function () {
     it("Owner can add candidate BEFORE voting starts", async () => {
       // Deploy a fresh instance with a 10-minute setup window before voting starts
-      const freshVoting = await VotingContract.deploy(candidateNames, 10, duration);
+      const freshVoting = await VotingContract.deploy(
+        candidateNames,
+        10,
+        duration,
+      );
       await freshVoting.deployed();
 
       await expect(freshVoting.addCandidate("David"))
@@ -78,34 +86,40 @@ describe("Voting Contract", function () {
     });
 
     it("Should fail if candidate name is empty", async () => {
-      const freshVoting = await VotingContract.deploy(candidateNames, 10, duration);
+      const freshVoting = await VotingContract.deploy(
+        candidateNames,
+        10,
+        duration,
+      );
       await freshVoting.deployed();
 
       await expect(freshVoting.addCandidate("")).to.be.revertedWith(
-        "Candidate name cannot be empty"
+        "Candidate name cannot be empty",
       );
     });
 
     it("Should fail if candidate already exists", async () => {
-      const freshVoting = await VotingContract.deploy(candidateNames, 10, duration);
+      const freshVoting = await VotingContract.deploy(
+        candidateNames,
+        10,
+        duration,
+      );
       await freshVoting.deployed();
 
       await expect(freshVoting.addCandidate("Alice")).to.be.revertedWith(
-        "Candidate already exists"
+        "Candidate already exists",
       );
     });
 
     it("Should fail if non-owner tries to add candidate", async () => {
       await expect(
-        voting.connect(addr1).addCandidate("Eve")
+        voting.connect(addr1).addCandidate("Eve"),
       ).to.be.revertedWith("Only the owner can perform this action.");
     });
 
     it("Should fail if adding candidate AFTER voting starts", async () => {
-      await expect(
-        voting.addCandidate("LateCandidate")
-      ).to.be.revertedWith(
-        "Cannot add candidates after voting has started."
+      await expect(voting.addCandidate("LateCandidate")).to.be.revertedWith(
+        "Cannot add candidates after voting has started.",
       );
     });
   });
@@ -124,31 +138,31 @@ describe("Voting Contract", function () {
     });
 
     it("Should prevent double voting", async () => {
-      await voting.connect(addr1).vote(0);
+      const tx = await voting.connect(addr1).vote(0);
+      await tx.wait();
 
-      await expect(
-        voting.connect(addr1).vote(1)
-      ).to.be.revertedWith("You have already voted.");
+      await expect(voting.connect(addr1).vote(1)).to.be.revertedWith(
+        "You have already voted.",
+      );
     });
 
     it("Should reject invalid candidate index", async () => {
-      await expect(
-        voting.connect(addr1).vote(999)
-      ).to.be.revertedWith("Invalid candidate index");
+      await expect(voting.connect(addr1).vote(999)).to.be.revertedWith(
+        "Invalid candidate index",
+      );
     });
 
     it("Should record which candidate a voter voted for", async () => {
-      await voting.connect(addr1).vote(1);
+      const tx = await voting.connect(addr1).vote(1);
+      await tx.wait();
 
       const votedFor = await voting.voterVotedFor(addr1.address);
       expect(votedFor).to.equal("Bob");
     });
 
     it("Should fail if user hasn't voted and calls voterVotedFor", async () => {
-      await expect(
-        voting.voterVotedFor(addr1.address)
-      ).to.be.revertedWith(
-        "This address has not casted a vote yet"
+      await expect(voting.voterVotedFor(addr1.address)).to.be.revertedWith(
+        "This address has not casted a vote yet",
       );
     });
   });
@@ -170,9 +184,9 @@ describe("Voting Contract", function () {
       ]);
       await network.provider.send("evm_mine");
 
-      await expect(
-        voting.connect(addr1).vote(0)
-      ).to.be.revertedWith("Voting is not currently active.");
+      await expect(voting.connect(addr1).vote(0)).to.be.revertedWith(
+        "Voting is not currently active.",
+      );
     });
 
     it("Should return 0 remaining time after voting ends", async () => {
@@ -203,9 +217,12 @@ describe("Voting Contract", function () {
     });
 
     it("Should return vote counts correctly", async () => {
-      await voting.connect(addr1).vote(0);
-      await voting.connect(addr2).vote(0);
-      await voting.connect(addr3).vote(1);
+      const tx1 = await voting.connect(addr1).vote(0);
+      await tx1.wait();
+      const tx2 = await voting.connect(addr2).vote(0);
+      await tx2.wait();
+      const tx3 = await voting.connect(addr3).vote(1);
+      await tx3.wait();
 
       const votes = await voting.getAllVotesOfCandidates();
 

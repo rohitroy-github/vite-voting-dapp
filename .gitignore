@@ -31,7 +31,11 @@ Thumbs.db
 
 # Cache and package manager files
 /.cache
+/.vite
+/backend-hardhat/cache
+/frontend-vite/node_modules/.vite
+*.cache
 /yarn-error.log
 
-# My files !
+# External files !
 /readMeRohit
