@@ -12,8 +12,6 @@ node_modules
 # Hardhat artifacts
 /artifacts
 artifacts
-/cache
-cache
 
 # Hardhat coverage reports
 /coverage
@@ -35,5 +33,5 @@ Thumbs.db
 /.cache
 /yarn-error.log
 
-# External files !
+# My files !
 /readMeRohit
