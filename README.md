@@ -1,6 +1,6 @@
-# Decntrocast (EVM Based)
+# Decentrocast (EVM Based)
 
-**Decntrocast** is a **decentralized voting application** built with **ViteJS** to provide a secure, transparent, and tamper-resistant voting experience.
+**Decentrocast** is a **decentralized voting application** built with **ViteJS** to provide a secure, transparent, and tamper-resistant voting experience.
 
 The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet** (via Alchemy RPC).
 
@@ -19,10 +19,14 @@ The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet
 - **Wallet-Based Authentication** - Connect with MetaMask to participate in voting.
 - **One Wallet, One Vote** - Each wallet address can cast only one vote.
 - **Live Voting Status** - View whether voting is active or finished.
-- **Real-Time Candidate Table** - See candidate list and vote counts in the UI.
-- **Countdown Visibility** - Track remaining voting time during active sessions.
+- **Real-Time Candidate Table** - See candidate list and vote counts in the UI with live updates.
+- **Dynamic Countdown Timer** - Visual progress bar showing remaining voting time that updates every second.
+- **Vote Confirmation** - See which candidate you voted for with their ID and name.
+- **Voting Loader** - Real-time spinner feedback while vote is being submitted and processed.
 - **Transparent Final Results** - Display winner and final vote totals after voting ends.
 - **Multi-Network Ready** - Supports Localhost and Sepolia deployment workflows.
+- **Candidate Search** - Vote by entering either the candidate index or name.
+- **Developer-Friendly Code** - Well-commented Solidity smart contract for easy understanding.
 
 ---
 
@@ -44,13 +48,19 @@ The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet
 
 ---
 
+## Quick Setup Guide
+
+For a complete step-by-step guide to clone and run Decentrocast locally, see the **[Local Setup Guide](./LocalSetupGuide.md)**.
+
+---
+
 ## Localhost (Steps To Run / Execute)
 
-### Backend (Solidity-Hardhat):
+### backend-hardhat:
 
 1. Navigate to the backend folder:
    ```sh
-   cd "backend (solidity-hardhat)"
+   cd "backend-hardhat"
    ```
 2. Install dependencies:
    ```sh
@@ -69,7 +79,7 @@ The app currently supports both **Localhost** and the **Ethereum Sepolia Testnet
    npx hardhat run scripts/deploy.js --network sepolia
    ```
 5. Copy the deployed **CONTRACT_ADDRESS** from terminal output and update:
-   - `frontend/src/constants/constant.js`
+   - `frontend-vite/src/constants/constant.js`
 
 ### Frontend:
 
