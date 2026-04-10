@@ -17,6 +17,7 @@ function App() {
     connectToMetamask,
     handleNumberChange,
     disconnectWallet,
+    refreshVotingStatus,
   } = useVoting();
 
   return (
@@ -36,6 +37,7 @@ function App() {
             voteFunction={vote}
             isVoting={isVoting}
             showButton={CanVote}
+            refreshVotingStatus={refreshVotingStatus}
           />
         ) : (
           <Login connectWallet={connectToMetamask} />

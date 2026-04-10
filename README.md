@@ -81,6 +81,23 @@ For a complete step-by-step guide to clone and run Decentrocast locally, see the
 5. Copy the deployed **CONTRACT_ADDRESS** from terminal output and update:
    - `frontend-vite/src/constants/constant.js`
 
+### Backend npm Scripts
+
+Run these from `backend-hardhat`:
+
+- `npm run compile`: runs `hardhat compile`
+- `npm test`: runs `hardhat test`
+- `npm run node`: runs `hardhat node`
+- `npm run clean`: runs `hardhat clean`
+- `npm run deploy`: runs `hardhat run scripts/deploy.js`
+- `npm run deploy:localhost`: runs `hardhat run scripts/deploy.js --network localhost`
+
+### Backend Test Log
+
+These are the tests done for the backend smart contract setup:
+
+- [View latest backend test results](./backend-hardhat/test-logs/latest.log)
+
 ### Frontend:
 
 1. Navigate to the frontend folder:

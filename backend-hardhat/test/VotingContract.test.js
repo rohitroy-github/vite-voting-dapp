@@ -16,7 +16,7 @@ describe("Voting Contract", function () {
 
     VotingContract = await ethers.getContractFactory("VotingContract");
     voting = await VotingContract.deploy(candidateNames, 0, duration);
-    await voting.deployed();
+    await voting.waitForDeployment();
   });
 
   // =============================
@@ -75,7 +75,7 @@ describe("Voting Contract", function () {
         10,
         duration,
       );
-      await freshVoting.deployed();
+      await freshVoting.waitForDeployment();
 
       await expect(freshVoting.addCandidate("David"))
         .to.emit(freshVoting, "CandidateAdded")
@@ -91,7 +91,7 @@ describe("Voting Contract", function () {
         10,
         duration,
       );
-      await freshVoting.deployed();
+      await freshVoting.waitForDeployment();
 
       await expect(freshVoting.addCandidate("")).to.be.revertedWith(
         "Candidate name cannot be empty",
@@ -104,7 +104,7 @@ describe("Voting Contract", function () {
         10,
         duration,
       );
-      await freshVoting.deployed();
+      await freshVoting.waitForDeployment();
 
       await expect(freshVoting.addCandidate("Alice")).to.be.revertedWith(
         "Candidate already exists",
@@ -134,7 +134,7 @@ describe("Voting Contract", function () {
         .withArgs(addr1.address, 0);
 
       const allVotes = await voting.getAllVotesOfCandidates();
-      expect(allVotes[0].voteCount).to.equal(1);
+      expect(allVotes[0].voteCount).to.equal(1n);
     });
 
     it("Should prevent double voting", async () => {
@@ -198,12 +198,12 @@ describe("Voting Contract", function () {
       await network.provider.send("evm_mine");
 
       const remaining = await voting.getRemainingTime();
-      expect(remaining).to.equal(0);
+      expect(remaining).to.equal(0n);
     });
 
     it("Should return correct remaining time during voting", async () => {
       const remaining = await voting.getRemainingTime();
-      expect(remaining).to.be.gt(0);
+      expect(remaining).to.be.gt(0n);
     });
   });
 
@@ -226,9 +226,9 @@ describe("Voting Contract", function () {
 
       const votes = await voting.getAllVotesOfCandidates();
 
-      expect(votes[0].voteCount).to.equal(2);
-      expect(votes[1].voteCount).to.equal(1);
-      expect(votes[2].voteCount).to.equal(0);
+      expect(votes[0].voteCount).to.equal(2n);
+      expect(votes[1].voteCount).to.equal(1n);
+      expect(votes[2].voteCount).to.equal(0n);
     });
   });
 });

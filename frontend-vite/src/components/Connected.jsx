@@ -102,6 +102,19 @@ const Connected = (props) => {
     };
   }, []);
 
+  // When the local timer reaches zero, immediately re-check the on-chain
+  // voting status so the UI flips to Finished without waiting for the next
+  // 30-second getRemainingTime poll or a Voted event.
+  useEffect(() => {
+    if (
+      typeof votingEndTs === "number" &&
+      typeof currentTs === "number" &&
+      currentTs >= votingEndTs
+    ) {
+      props.refreshVotingStatus();
+    }
+  }, [currentTs, votingEndTs]);
+
   useEffect(() => {
     const liveTimer = setInterval(() => {
       setCurrentTs((prev) => (typeof prev === "number" ? prev + 1 : prev));

@@ -76,6 +76,7 @@ export function useVoting() {
 
       // Keep loader visible until this user's state is synced as well.
       await canVote();
+      setNumber("");
     } catch (err) {
       console.error("Vote failed:", err);
       setIsVoting(false);
@@ -129,10 +130,12 @@ export function useVoting() {
   function handleAccountsChanged(accounts) {
     if (accounts.length > 0 && account !== accounts[0]) {
       setAccount(accounts[0]);
+      setNumber("");
       canVote();
     } else {
       setIsConnected(false);
       setAccount(null);
+      setNumber("");
     }
   }
 
@@ -178,5 +181,6 @@ export function useVoting() {
     connectToMetamask,
     handleNumberChange,
     disconnectWallet,
+    refreshVotingStatus: getCurrentStatus,
   };
 }
